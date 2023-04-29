@@ -19,7 +19,7 @@ def x_p(p, a):
 
 # PDF and CDF plot
 x_values = np.linspace(0, 3 * tau, 500)
-plt.plot(x_values, f_X(x_values, a), label='PDF f_X(x)')
+# plt.plot(x_values, f_X(x_values, a), label='PDF f_X(x)')
 plt.plot(x_values, F_X(x_values, a), label='CDF F_X(x)')
 plt.xlabel('x')
 plt.ylabel('Probability')
