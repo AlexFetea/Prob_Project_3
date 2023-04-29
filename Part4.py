@@ -21,12 +21,28 @@ def inverse_rayleigh(u):
 
     return math.sqrt(-2 * math.log(1 - u)) / 57
 
-def run_trial():
-    pass
-    
-def plot_stats():
-    pass
+def get_sample_mean(size):
+    values = [inverse_rayleigh(get_next_random()) for _ in range(size)]
+    return sum(values) / size
 
+def run_trials():
+    sample_sizes = [10, 30, 50, 100, 250, 500, 1000]
+    X = []
+    Y = []
+    mu_x = 1/57 * math.sqrt(math.pi / 2)
+    for size in sample_sizes:
+        # 110 estimates of each sample mean
+        for i in range(110):
+            X.append(size)
+            Y.append(get_sample_mean(size))
+    plt.scatter(X, Y, s=2)
+    plt.title("Sample Means of Rayleigh Distribution")
+    plt.xlabel("Sample Size")
+    plt.ylabel("Sample Mean")
+    plt.plot([0, 1000], [mu_x, mu_x], color='r')
+    plt.xscale('log')
+    plt.show()
+    
 def print_randoms():
     n = 0
     for i in range(50):
@@ -39,3 +55,5 @@ def print_randoms():
     print(n, get_next_random())
     n += 1
     print(n, get_next_random())
+
+run_trials()
