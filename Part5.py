@@ -71,7 +71,13 @@ def run_trials():
         standard_CDFs = [norm.sf(-num) for num in z]
 
         # Calculate the MAD
-        MAD = max([abs(emp - std) for emp, std in zip(empirical_CDFs, standard_CDFs)])
+        temp = [abs(emp - std) for emp, std in zip(empirical_CDFs, standard_CDFs)]
+        MAD = max(temp)
+        print("-----------------------")
+        concatenated_string = ' & '.join([f'{num:.4f}' for num in temp])
+        print(concatenated_string)
+        print(MAD)
+        print("-----------------------")
 
         # Plot the empirical CDF points
         ax.scatter(z, empirical_CDFs, label='Empirical CDF', color='red', zorder=2)
