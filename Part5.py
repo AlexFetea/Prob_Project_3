@@ -3,6 +3,10 @@ import math
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
+from scipy.stats import norm
+
+
+
 
 n = 1000
 
@@ -52,13 +56,44 @@ def getMeanAndVar(n, K):
 def run_trials():
     analyses = [(3,5), (9,25), (27,110), (81, 550)]
 
-    for tuple in analyses:
+    fig, axes = plt.subplots(2, 2, figsize=(10, 10))
+    axes = axes.flatten()
+
+    for index, tuple in enumerate(analyses):
+        ax = axes[index]
         z_values = []
         values, mean, var = getMeanAndVar(tuple[0], tuple[1])
         print(mean, var)
         for value in values:
             z_values.append((value - mean)/math.sqrt(var))
+        z = [-1.4, -1.0, -0.5, 0, 0.5, 1.0, 1.4]
+        empirical_CDFs = [sum(map(lambda i: i <= num, z_values))/len(z_values) for num in z]
+        standard_CDFs = [norm.sf(-num) for num in z]
 
-    
+        # Calculate the MAD
+        MAD = max([abs(emp - std) for emp, std in zip(empirical_CDFs, standard_CDFs)])
+
+        # Plot the empirical CDF points
+        ax.scatter(z, empirical_CDFs, label='Empirical CDF', color='red', zorder=2)
+
+        # Plot the standard CDF as a continuous function
+        standard_CDFs_x = [i * 5 / 100 - 2.5 for i in range(100)]
+        standard_CDFs_y = [norm.cdf(x) for x in standard_CDFs_x]
+        ax.plot(standard_CDFs_x, standard_CDFs_y, label='Standard CDF', color='blue')
+
+        # Create the highlighted region above and below the standard CDF line
+        upper_bound = [y + MAD for y in standard_CDFs_y]
+        lower_bound = [y - MAD for y in standard_CDFs_y]
+        ax.fill_between(standard_CDFs_x, lower_bound, upper_bound, color='green', alpha=0.1, label='MAD')
+
+        # Set up the axis labels and legend
+        ax.set_title(str(tuple))
+        ax.set_xlabel('z')
+        ax.set_ylabel('Values')
+        ax.legend()
+
+    # Show the plot
+    plt.tight_layout()
+    plt.show()
 
 run_trials()
